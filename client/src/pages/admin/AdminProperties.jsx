@@ -3,7 +3,20 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchAdminProperties, fetchAdminAgents, createProperty, updateProperty, deleteProperty } from '../../api';
 import { Plus, Pencil, Trash2, Building2, MapPin } from 'lucide-react';
 
-const EMPTY = { agentId:'', title:'', location:'', price:'', type:'', beds:'', baths:'', area:'', img:'', isFeatured:false };
+const EMPTY = { 
+  agentId: '', 
+  title: '', 
+  location: '', 
+  price: '', 
+  type: '', 
+  beds: '', 
+  baths: '', 
+  area: '', 
+  img: '', 
+  isFeatured: false,
+  amenities: [],
+  gallery: []
+};
 
 export default function AdminProperties() {
   const qc = useQueryClient();
@@ -13,7 +26,16 @@ export default function AdminProperties() {
   const [form, setForm] = useState(EMPTY);
 
   const openAdd = () => { setForm(EMPTY); setModal({ mode: 'add' }); };
-  const openEdit = (p) => { setForm({ ...p, beds: p.beds ?? '', baths: p.baths ?? '' }); setModal({ mode: 'edit', id: p.id }); };
+  const openEdit = (p) => { 
+    setForm({ 
+      ...p, 
+      beds: p.beds ?? '', 
+      baths: p.baths ?? '',
+      amenities: Array.isArray(p.amenities) ? p.amenities : [],
+      gallery: Array.isArray(p.gallery) ? p.gallery : []
+    }); 
+    setModal({ mode: 'edit', id: p.id }); 
+  };
   const closeModal = () => setModal(null);
 
   const saveMut = useMutation({
@@ -120,6 +142,50 @@ export default function AdminProperties() {
                   className="w-4 h-4 accent-blue-600" />
                 <span className="text-sm font-semibold text-slate-700">Mark as Featured</span>
               </label>
+
+              {/* Amenities Section */}
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Amenities</label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {form.amenities.map((a, i) => (
+                    <span key={i} className="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded-lg flex items-center gap-1">
+                      {a}
+                      <button onClick={() => set('amenities', form.amenities.filter((_, idx) => idx !== i))} className="hover:text-red-500">✕</button>
+                    </span>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <input id="amenity-input" type="text" placeholder="e.g. Pool" onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      const val = e.target.value.trim();
+                      if (val && !form.amenities.includes(val)) {
+                        set('amenities', [...form.amenities, val]);
+                        e.target.value = '';
+                      }
+                    }
+                  }} className="flex-1 border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-500" />
+                </div>
+              </div>
+
+              {/* Gallery Section */}
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Gallery Images (URLs)</label>
+                <div className="flex flex-col gap-2">
+                  {form.gallery.map((g, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <input type="text" value={g} onChange={(e) => {
+                        const next = [...form.gallery];
+                        next[i] = e.target.value;
+                        set('gallery', next);
+                      }} className="flex-1 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:border-blue-500" />
+                      <button onClick={() => set('gallery', form.gallery.filter((_, idx) => idx !== i))} className="text-red-500">✕</button>
+                    </div>
+                  ))}
+                  <button onClick={() => set('gallery', [...form.gallery, ''])}
+                    className="text-xs font-bold text-blue-600 hover:underline text-left">+ Add Image URL</button>
+                </div>
+              </div>
               <button onClick={() => saveMut.mutate(form)} disabled={saveMut.isPending}
                 className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100 disabled:opacity-60">
                 {saveMut.isPending ? 'Saving…' : modal.mode === 'add' ? 'Add Property' : 'Save Changes'}
