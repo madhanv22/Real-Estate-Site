@@ -29,14 +29,24 @@ app.use((err, req, res, next) => {
 // Root route
 app.get('/', (req, res) => res.send('PropFunnel API is running...'));
 
-// Only start the server if we are running locally
-if (process.env.NODE_ENV !== 'production') {
-  sequelize.sync({ alter: true }).then(() => {
+// Startup Logic
+const startServer = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('✅ Database connected successfully');
+    
+    // In production, we sync without 'alter' for safety, or you can run migrations
+    await sequelize.sync(); 
     console.log('✅ Database synced');
-    app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
-  }).catch((err) => {
-    console.error('❌ DB sync error:', err.message);
-  });
-}
+
+    if (process.env.NODE_ENV !== 'production') {
+      app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+    }
+  } catch (err) {
+    console.error('❌ Database initialization error:', err.message);
+  }
+};
+
+startServer();
 
 module.exports = app;
