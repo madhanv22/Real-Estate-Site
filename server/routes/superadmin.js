@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { User, Property, Lead, Agent, Testimonial } = require('../models');
+const { User, Property, Lead, Agent, Testimonial, sequelize } = require('../models');
 const { auth, isSuperAdmin } = require('../middleware/auth');
 
 router.use(auth, isSuperAdmin);
@@ -7,12 +7,39 @@ router.use(auth, isSuperAdmin);
 // GET /api/superadmin/stats
 router.get('/stats', async (req, res) => {
   try {
-    const [users, properties, leads] = await Promise.all([
+    const [users, properties, leads, recentLeads, recentProperties] = await Promise.all([
       User.count({ where: { role: 'admin' } }),
       Property.count({ where: { isActive: true } }),
       Lead.count(),
+      Lead.findAll({ 
+        limit: 5, 
+        order: [['createdAt', 'DESC']],
+        include: [{ model: Property, attributes: ['title'] }, { model: User, attributes: ['companyName'] }]
+      }),
+      Property.findAll({ 
+        limit: 5, 
+        order: [['createdAt', 'DESC']],
+        include: [{ model: User, attributes: ['companyName'] }]
+      }),
     ]);
-    res.json({ users, properties, leads });
+
+    // Simple month-wise lead distribution for the chart
+    const monthlyData = await Lead.findAll({
+      attributes: [
+        [sequelize.fn('date_format', sequelize.col('createdAt'), '%b'), 'month'],
+        [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+      ],
+      group: ['month'],
+    });
+
+    res.json({ 
+      users, 
+      properties, 
+      leads, 
+      recentLeads, 
+      recentProperties,
+      chartData: monthlyData.map(d => ({ name: d.getDataValue('month'), value: d.getDataValue('count') }))
+    });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 

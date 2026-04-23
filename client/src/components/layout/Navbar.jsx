@@ -23,17 +23,33 @@ export default function Navbar() {
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-6">
+          <Link to="/" className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">Home</Link>
           <Link to="/properties" className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">Properties</Link>
-          {user ? (
-            <>
-              <Link to={user.role === 'super_admin' ? '/superadmin' : '/admin'}
-                className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+          <button 
+            onClick={() => {
+              if (window.location.pathname === '/') {
+                document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                navigate('/');
+                setTimeout(() => document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' }), 100);
+              }
+            }}
+            className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors"
+          >
+            About Us
+          </button>
+          {user && (
+            <div className="flex items-center gap-4">
+              <Link 
+                to={user.role === 'super_admin' ? '/superadmin' : (user.role === 'agent' ? '/agent' : '/admin')}
+                className="text-sm font-extrabold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition-all"
+              >
                 Dashboard
               </Link>
-              <button onClick={handleLogout} className="text-sm font-semibold text-slate-500 hover:text-red-500 transition-colors">Logout</button>
-            </>
-          ) : (
-            <Link to="/login" className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">Login</Link>
+              <button onClick={handleLogout} className="text-sm font-bold text-slate-500 hover:text-red-600 transition-colors">
+                Sign Out
+              </button>
+            </div>
           )}
           <a href="https://wa.me/919876543210?text=Hi, I'm interested in a property."
             target="_blank" rel="noreferrer"
@@ -50,15 +66,30 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-white border-t border-slate-100 px-6 py-4 flex flex-col gap-3">
-          <Link to="/properties" onClick={() => setOpen(false)} className="text-sm font-semibold text-slate-700">Properties</Link>
-          {user ? (
+        <div className="md:hidden bg-white border-t border-slate-100 px-6 py-6 flex flex-col gap-4 shadow-xl">
+          <Link to="/" onClick={() => setOpen(false)} className="text-sm font-bold text-slate-700">Home</Link>
+          <Link to="/properties" onClick={() => setOpen(false)} className="text-sm font-bold text-slate-700">Properties</Link>
+          <button 
+            onClick={() => {
+              setOpen(false);
+              if (window.location.pathname === '/') {
+                document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                navigate('/');
+                setTimeout(() => document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' }), 100);
+              }
+            }}
+            className="text-left text-sm font-bold text-slate-700"
+          >
+            About Us
+          </button>
+          {user && (
             <>
-              <Link to={user.role === 'super_admin' ? '/superadmin' : '/admin'} onClick={() => setOpen(false)} className="text-sm font-semibold text-blue-600">Dashboard</Link>
-              <button onClick={() => { handleLogout(); setOpen(false); }} className="text-left text-sm font-semibold text-red-500">Logout</button>
+              <Link to={user.role === 'super_admin' ? '/superadmin' : (user.role === 'agent' ? '/agent' : '/admin')} onClick={() => setOpen(false)} 
+                className="text-sm font-black text-blue-600 bg-blue-50 px-4 py-2 rounded-xl">Go to Dashboard</Link>
+              <button onClick={() => { setOpen(false); handleLogout(); }}
+                className="text-left text-sm font-bold text-red-600 px-4">Sign Out</button>
             </>
-          ) : (
-            <Link to="/login" onClick={() => setOpen(false)} className="text-sm font-semibold text-slate-700">Login</Link>
           )}
           <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer"
             className="flex items-center gap-2 bg-whatsapp text-white text-sm font-bold px-4 py-2.5 rounded-xl w-fit">

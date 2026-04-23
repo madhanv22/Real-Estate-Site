@@ -22,8 +22,8 @@ const auth = async (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
-  if (!['admin', 'super_admin'].includes(req.user.role))
-    return res.status(403).json({ error: 'Admin access required' });
+  if (!['admin', 'super_admin', 'agent'].includes(req.user.role))
+    return res.status(403).json({ error: 'Staff access required' });
   next();
 };
 

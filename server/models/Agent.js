@@ -11,5 +11,6 @@ module.exports = (sequelize) => {
     avatar: { type: DataTypes.TEXT },
     tagline: { type: DataTypes.STRING },
     phone: { type: DataTypes.STRING },
+    linkedUserId: { type: DataTypes.INTEGER },
   });
 };

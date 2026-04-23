@@ -20,6 +20,12 @@ app.use('/api/superadmin', require('./routes/superadmin'));
 
 app.get('/api/health', (_, res) => res.json({ status: 'ok', time: new Date() }));
 
+// Global Error Logger
+app.use((err, req, res, next) => {
+  console.error('❌ SERVER ERROR:', err.stack);
+  res.status(500).json({ error: 'Internal Server Error', details: err.message });
+});
+
 // Root route
 app.get('/', (req, res) => res.send('PropFunnel API is running...'));
 

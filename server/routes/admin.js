@@ -9,20 +9,47 @@ router.use(auth, isAdmin);
 router.get('/stats', async (req, res) => {
   try {
     const userId = req.user.id;
-    const [properties, leads, newLeads] = await Promise.all([
-      Property.count({ where: { userId, isActive: true } }),
-      Lead.count({ where: { userId } }),
-      Lead.count({ where: { userId, status: 'new' } }),
-    ]);
-    res.json({ properties, leads, newLeads, views: 0 });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+    const isSuper = req.user.role === 'super_admin';
+    
+    // Safety check: ensure we only count active properties
+    const propertyWhere = isSuper ? { isActive: true } : { userId, isActive: true };
+    const leadWhere = isSuper ? {} : { userId };
+
+    const propertiesCount = await Property.count({ where: propertyWhere });
+    const leadsCount = await Lead.count({ where: leadWhere });
+    const newLeadsCount = await Lead.count({ where: { ...leadWhere, status: 'new' } });
+
+    res.json({ 
+      properties: propertiesCount || 0, 
+      leads: leadsCount || 0, 
+      newLeads: newLeadsCount || 0, 
+      views: 0 
+    });
+  } catch (err) { 
+    console.error('❌ Stats Error:', err);
+    res.status(500).json({ error: err.message }); 
+  }
 });
 
 // GET /api/admin/properties
 router.get('/properties', async (req, res) => {
   try {
+    const isSuper = req.user.role === 'super_admin';
+    const isAgent = req.user.role === 'agent';
+    
+    let where = {};
+    if (isSuper) {
+      where = {};
+    } else if (isAgent) {
+      // Find the agent's record to get their admin's userId
+      const agent = await Agent.findOne({ where: { linkedUserId: req.user.id } });
+      where = agent ? { userId: agent.userId } : { id: 0 }; // fallback to none if no agent profile
+    } else {
+      where = { userId: req.user.id };
+    }
+
     const properties = await Property.findAll({
-      where: { userId: req.user.id },
+      where,
       include: [{ model: Agent }],
       order: [['createdAt', 'DESC']],
     });
@@ -42,7 +69,10 @@ router.post('/properties', async (req, res) => {
 // PUT /api/admin/properties/:id
 router.put('/properties/:id', async (req, res) => {
   try {
-    const property = await Property.findOne({ where: { id: req.params.id, userId: req.user.id } });
+    const isSuper = req.user.role === 'super_admin';
+    const property = await Property.findOne({ 
+      where: isSuper ? { id: req.params.id } : { id: req.params.id, userId: req.user.id } 
+    });
     if (!property) return res.status(404).json({ error: 'Not found' });
     await property.update(req.body);
     res.json(property);
@@ -62,7 +92,10 @@ router.delete('/properties/:id', async (req, res) => {
 // GET /api/admin/agents
 router.get('/agents', async (req, res) => {
   try {
-    const agents = await Agent.findAll({ where: { userId: req.user.id } });
+    const isSuper = req.user.role === 'super_admin';
+    const agents = await Agent.findAll({ 
+      where: isSuper ? {} : { userId: req.user.id } 
+    });
     res.json(agents);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -70,9 +103,34 @@ router.get('/agents', async (req, res) => {
 // POST /api/admin/agents
 router.post('/agents', async (req, res) => {
   try {
-    const agent = await Agent.create({ ...req.body, userId: req.user.id });
+    const { email, password, name, ...profileData } = req.body;
+    let linkedUserId = null;
+
+    if (email && password) {
+      const user = await User.create({
+        name,
+        email,
+        password,
+        role: 'agent',
+        phone: req.body.phone,
+        companyName: req.user.companyName
+      });
+      linkedUserId = user.id;
+    }
+
+    const agent = await Agent.create({ 
+      ...profileData, 
+      id: `agent_${Date.now()}`,
+      name,
+      userId: req.user.id,
+      linkedUserId
+    });
     res.status(201).json(agent);
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { 
+    console.error('❌ Agent Creation Error:', err);
+    const msg = err.errors ? err.errors.map(e => e.message).join(', ') : err.message;
+    res.status(400).json({ error: msg }); 
+  }
 });
 
 // PUT /api/admin/agents/:id
@@ -88,8 +146,9 @@ router.put('/agents/:id', async (req, res) => {
 // GET /api/admin/leads
 router.get('/leads', async (req, res) => {
   try {
+    const isSuper = req.user.role === 'super_admin';
     const leads = await Lead.findAll({
-      where: { userId: req.user.id },
+      where: isSuper ? {} : { userId: req.user.id },
       include: [{ model: Property, attributes: ['id','title','location'] }],
       order: [['createdAt', 'DESC']],
     });

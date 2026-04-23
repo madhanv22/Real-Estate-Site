@@ -19,7 +19,12 @@ export default function Footer() {
           <div className="flex flex-col gap-2.5">
             <Link to="/" className="text-sm text-white/40 hover:text-white/80 transition-colors">Home</Link>
             <Link to="/properties" className="text-sm text-white/40 hover:text-white/80 transition-colors">Properties</Link>
-            <Link to="/login" className="text-sm text-white/40 hover:text-white/80 transition-colors">Admin Login</Link>
+            <button 
+              onClick={() => document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' })}
+              className="text-left text-sm text-white/40 hover:text-white/80 transition-colors"
+            >
+              About Us
+            </button>
           </div>
         </div>
         <div>

@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Home, Eye, EyeOff, LogIn } from 'lucide-react';
 
 export default function LoginPage() {
+  const [role, setRole] = useState('admin'); // 'admin' or 'agent'
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState('');
@@ -16,7 +17,10 @@ export default function LoginPage() {
     mutationFn: login,
     onSuccess: (data) => {
       loginUser(data);
-      navigate(data.user.role === 'super_admin' ? '/superadmin' : '/admin');
+      const userRole = data.user.role;
+      if (userRole === 'super_admin') navigate('/superadmin');
+      else if (userRole === 'agent') navigate('/agent');
+      else navigate('/admin');
     },
     onError: (err) => setError(err.response?.data?.error || 'Login failed'),
   });
@@ -34,11 +38,27 @@ export default function LoginPage() {
             </div>
             <span className="font-serif text-2xl font-black text-white">PropFunnel</span>
           </div>
-          <p className="text-white/40 text-sm">Admin Portal — Sign in to continue</p>
+          <p className="text-white/40 text-sm">Staff & Management Portal</p>
         </div>
 
-        <div className="bg-white rounded-3xl p-8 shadow-2xl">
-          <h2 className="text-xl font-extrabold text-slate-900 mb-6">Welcome back</h2>
+        <div className="bg-white rounded-[32px] p-2 shadow-2xl overflow-hidden">
+          {/* Role Toggle */}
+          <div className="flex p-1 bg-slate-100 rounded-[28px] mb-6">
+            <button onClick={() => setRole('admin')}
+              className={`flex-1 py-2.5 text-xs font-black uppercase tracking-widest rounded-[24px] transition-all ${role === 'admin' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>
+              Admin Login
+            </button>
+            <button onClick={() => setRole('agent')}
+              className={`flex-1 py-2.5 text-xs font-black uppercase tracking-widest rounded-[24px] transition-all ${role === 'agent' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>
+              Agent Login
+            </button>
+          </div>
+
+          <div className="px-6 pb-8 pt-2">
+            <h2 className="text-2xl font-black text-slate-900 mb-2">
+              {role === 'admin' ? 'Admin Portal' : 'Agent Portal'}
+            </h2>
+            <p className="text-slate-400 text-sm mb-8 font-medium">Please enter your credentials to access your dashboard.</p>
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-semibold px-4 py-3 rounded-xl mb-5">

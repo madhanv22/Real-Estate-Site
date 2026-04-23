@@ -1,71 +1,141 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchSuperStats, fetchUsers, fetchAllLeads } from '../../api';
-import { Users, Building2, MessageSquare, TrendingUp } from 'lucide-react';
+import { fetchSuperStats } from '../../api';
+import { 
+  Users, Building2, MessageSquare, TrendingUp, 
+  ArrowUpRight, Clock, MapPin, ShieldCheck 
+} from 'lucide-react';
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, 
+  Tooltip, ResponsiveContainer, AreaChart, Area 
+} from 'recharts';
 
 export default function SuperAdminDashboard() {
-  const { data: stats = {} } = useQuery({ queryKey: ['super-stats'], queryFn: fetchSuperStats });
-  const { data: users = [] } = useQuery({ queryKey: ['users'], queryFn: fetchUsers });
-  const { data: leads = [] } = useQuery({ queryKey: ['all-leads'], queryFn: fetchAllLeads });
+  const { data: stats = {}, isLoading } = useQuery({ 
+    queryKey: ['super-stats'], 
+    queryFn: fetchSuperStats 
+  });
+
+  if (isLoading) return <div className="p-8 animate-pulse">Loading Dashboard...</div>;
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-extrabold text-slate-900">Super Admin Dashboard</h1>
-        <p className="text-slate-400 text-sm mt-1">Platform-wide overview</p>
+    <div className="p-8 space-y-8 bg-slate-50/50 min-h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Executive Overview</h1>
+          <p className="text-slate-500 font-medium mt-1 flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-blue-600" />
+            PropFunnel Global Platform Monitoring
+          </p>
+        </div>
+        <div className="bg-white border border-slate-200 px-4 py-2 rounded-2xl shadow-sm text-sm font-bold text-slate-600 flex items-center gap-2">
+          <Clock className="w-4 h-4" />
+          {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+        </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+      {/* Hero Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { label: 'Total Admins', value: stats.users ?? '–', icon: Users, color: 'text-blue-600 bg-blue-50' },
-          { label: 'Total Properties', value: stats.properties ?? '–', icon: Building2, color: 'text-emerald-600 bg-emerald-50' },
-          { label: 'Total Leads', value: stats.leads ?? '–', icon: MessageSquare, color: 'text-amber-600 bg-amber-50' },
-        ].map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${color}`}>
-              <Icon className="w-5 h-5" />
+          { label: 'Platform Admins', value: stats.users, icon: Users, bg: 'bg-blue-50', text: 'text-blue-600', hover: 'hover:border-blue-400', glow: 'bg-blue-50', growth: '+12%' },
+          { label: 'Active Properties', value: stats.properties, icon: Building2, bg: 'bg-emerald-50', text: 'text-emerald-600', hover: 'hover:border-emerald-400', glow: 'bg-emerald-50', growth: '+8%' },
+          { label: 'Total Leads Generated', value: stats.leads, icon: MessageSquare, bg: 'bg-amber-50', text: 'text-amber-600', hover: 'hover:border-amber-400', glow: 'bg-amber-50', growth: '+24%' },
+        ].map((s) => (
+          <div key={s.label} className={`bg-white border border-slate-200 rounded-3xl p-6 relative overflow-hidden group ${s.hover} transition-all shadow-sm`}>
+            <div className={`absolute -right-4 -top-4 w-24 h-24 ${s.glow} rounded-full group-hover:scale-110 transition-transform`} />
+            <div className="relative z-10">
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 ${s.bg} ${s.text}`}>
+                <s.icon className="w-6 h-6" />
+              </div>
+              <div className="flex items-end justify-between">
+                <div>
+                  <div className="text-4xl font-black text-slate-900 mb-1">{s.value}</div>
+                  <div className="text-sm font-bold text-slate-400 uppercase tracking-wider">{s.label}</div>
+                </div>
+                <div className="bg-emerald-50 text-emerald-600 text-xs font-black px-2 py-1 rounded-lg flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3" /> {s.growth}
+                </div>
+              </div>
             </div>
-            <div className="text-3xl font-black text-slate-900">{value}</div>
-            <div className="text-sm text-slate-400 mt-1">{label}</div>
           </div>
         ))}
       </div>
 
-      {/* Admin Users list */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mb-6">
-        <div className="px-6 py-4 border-b border-slate-100">
-          <h2 className="font-extrabold text-slate-900">Registered Admins</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Performance Chart */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="font-black text-slate-900 text-lg">Lead Growth Trend</h3>
+            <select className="bg-slate-50 border-none text-xs font-bold px-3 py-2 rounded-xl outline-none">
+              <option>Last 6 Months</option>
+              <option>Last Year</option>
+            </select>
+          </div>
+          <div className="h-72 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={stats.chartData || []}>
+                <defs>
+                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12, fontWeight: 600}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12, fontWeight: 600}} />
+                <Tooltip 
+                  contentStyle={{borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}}
+                />
+                <Area type="monotone" dataKey="value" stroke="#2563eb" strokeWidth={4} fillOpacity={1} fill="url(#colorValue)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
-        <div className="divide-y divide-slate-100">
-          {users.slice(0, 5).map((u) => (
-            <div key={u.id} className="px-6 py-4 flex items-center justify-between">
-              <div>
-                <div className="font-semibold text-slate-800">{u.name}</div>
-                <div className="text-xs text-slate-400">{u.email} · {u.companyName}</div>
-              </div>
-              <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${u.isActive ? 'bg-green-50 text-green-600 border-green-200' : 'bg-red-50 text-red-500 border-red-200'}`}>
-                {u.isActive ? 'Active' : 'Inactive'}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Recent leads */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100">
-          <h2 className="font-extrabold text-slate-900">Recent Leads (All Admins)</h2>
-        </div>
-        <div className="divide-y divide-slate-100">
-          {leads.slice(0, 5).map((l) => (
-            <div key={l.id} className="px-6 py-4 flex items-center justify-between gap-4">
-              <div>
-                <div className="font-semibold text-slate-800 text-sm">{l.phone}</div>
-                <div className="text-xs text-slate-400">{l.Property?.title || 'General'} · {l.User?.companyName || l.User?.name}</div>
-              </div>
-              <span className="text-xs font-bold bg-blue-50 text-blue-600 border border-blue-200 px-2.5 py-1 rounded-full capitalize">{l.status}</span>
+        {/* Recent Activities */}
+        <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden flex flex-col">
+          <div className="p-8 border-b border-slate-100 flex items-center justify-between">
+            <h3 className="font-black text-slate-900 text-lg">Platform Pulse</h3>
+            <button className="text-xs font-bold text-blue-600 hover:underline">View All Activities</button>
+          </div>
+          <div className="flex-1 overflow-auto p-2">
+            <div className="space-y-1">
+              {stats.recentLeads?.map((l, i) => (
+                <div key={i} className="flex items-start gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-colors group">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                    <MessageSquare className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-bold text-slate-900 text-sm">New Lead Received</span>
+                      <span className="text-[10px] font-bold text-slate-400">Just Now</span>
+                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed line-clamp-1">
+                      Lead for <span className="font-bold text-slate-700">{l.Property?.title}</span> captured by <span className="text-blue-600 font-bold">{l.User?.companyName}</span>
+                    </p>
+                  </div>
+                  <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500 transition-colors" />
+                </div>
+              ))}
+              {stats.recentProperties?.map((p, i) => (
+                <div key={i} className="flex items-start gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-colors group">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
+                    <Building2 className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-bold text-slate-900 text-sm">Property Published</span>
+                      <span className="text-[10px] font-bold text-slate-400">Today</span>
+                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed line-clamp-1">
+                      <span className="font-bold text-slate-700">{p.title}</span> listed by <span className="text-emerald-600 font-bold">{p.User?.companyName}</span>
+                    </p>
+                  </div>
+                  <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors" />
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>

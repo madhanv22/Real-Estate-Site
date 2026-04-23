@@ -5,15 +5,23 @@ import {
   BarChart3, Shield, ChevronRight
 } from 'lucide-react';
 
-export default function AdminLayout({ isSuperAdmin }) {
+export default function AdminLayout({ isSuperAdmin, isAgent }) {
   const { user, logoutUser } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => { logoutUser(); navigate('/login'); };
 
+  const agentLinks = [
+    { to: '/agent', icon: BarChart3, label: 'Dashboard', end: true },
+    { to: '/agent/properties', icon: Building2, label: 'Properties' },
+    { to: '/agent/leads', icon: MessageSquare, label: 'My Leads' },
+    { to: '/agent/profile', icon: User, label: 'My Profile' },
+  ];
+
   const adminLinks = [
     { to: '/admin', icon: BarChart3, label: 'Dashboard', end: true },
     { to: '/admin/properties', icon: Building2, label: 'Properties' },
+    { to: '/admin/agents', icon: Users, label: 'Agents' },
     { to: '/admin/leads', icon: MessageSquare, label: 'Leads' },
     { to: '/admin/profile', icon: User, label: 'Profile' },
   ];
@@ -21,10 +29,11 @@ export default function AdminLayout({ isSuperAdmin }) {
   const superLinks = [
     { to: '/superadmin', icon: BarChart3, label: 'Dashboard', end: true },
     { to: '/superadmin/users', icon: Users, label: 'Manage Admins' },
+    { to: '/superadmin/properties', icon: Building2, label: 'All Properties' },
     { to: '/superadmin/leads', icon: MessageSquare, label: 'All Leads' },
   ];
 
-  const links = isSuperAdmin ? superLinks : adminLinks;
+  const links = isSuperAdmin ? superLinks : isAgent ? agentLinks : adminLinks;
 
   return (
     <div className="min-h-screen flex bg-slate-50">
@@ -41,6 +50,8 @@ export default function AdminLayout({ isSuperAdmin }) {
           <div className="mt-2 flex items-center gap-1.5">
             {isSuperAdmin
               ? <><Shield className="w-3.5 h-3.5 text-amber-400" /><span className="text-xs text-amber-400 font-bold">Super Admin</span></>
+              : isAgent
+              ? <><User className="w-3.5 h-3.5 text-emerald-400" /><span className="text-xs text-emerald-400 font-bold">Agent Portal</span></>
               : <><Building2 className="w-3.5 h-3.5 text-blue-400" /><span className="text-xs text-blue-400 font-bold">Admin Panel</span></>}
           </div>
         </div>
