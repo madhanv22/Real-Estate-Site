@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PropFunnel – Verified Properties in Pune</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+
+  <!-- Chart.js (for price history chart) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════ -->
+<nav class="nav">
+  <div class="nav-inner">
+
+    <!-- Logo -->
+    <div class="nav-logo" onclick="showPage('home')">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/>
+          <path d="M9 21V12h6v9"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">PropFunnel</span>
+    </div>
+
+    <!-- Desktop links -->
+    <div class="nav-links">
+      <button class="nav-link" onclick="showPage('listings')">Properties</button>
+      <button class="nav-link" onclick="showAgentPage('priya-homes')">Priya Sharma</button>
+      <button class="nav-link" onclick="showAgentPage('ravi-properties')">Ravi Mehta</button>
+      <a href="https://wa.me/919876543210?text=Hi%2C%20I'm%20interested%20in%20a%20property."
+         target="_blank" class="btn btn-whatsapp btn-sm">
+        <svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
+        WhatsApp Us
+      </a>
+    </div>
+
+    <!-- Mobile toggle -->
+    <button class="nav-mobile-toggle" onclick="toggleMobileMenu()">
+      <svg viewBox="0 0 24 24">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+
+  </div>
+
+  <!-- Mobile menu (shown on small screens) -->
+  <div class="nav-mobile-menu" id="mobileMenu">
+    <button class="nav-mobile-link" onclick="showPage('listings')">Properties</button>
+    <button class="nav-mobile-link" onclick="showAgentPage('priya-homes')">Priya Sharma</button>
+    <button class="nav-mobile-link" onclick="showAgentPage('ravi-properties')">Ravi Mehta</button>
+    <a href="https://wa.me/919876543210" target="_blank" class="btn btn-whatsapp btn-sm" style="margin-top:8px">
+      <svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+      </svg>
+      WhatsApp Us
+    </a>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════════════
+     PAGE: HOME
+══════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-pill">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Verified Properties · Smart Price Insights
+      </div>
+      <h1 class="hero-title serif">
+        Discover Verified Properties<br>
+        <span>in Pune</span>
+      </h1>
+      <p class="hero-sub">
+        Get only the details you need — filtered to your budget and preferences.
+        Connect with real agents instantly via WhatsApp.
+      </p>
+      <div class="hero-cta">
+        <a href="https://wa.me/919876543210?text=Hi%2C%20I'm%20interested%20in%20a%20property.%20Please%20share%20details."
+           target="_blank" class="btn btn-whatsapp btn-lg">
+          <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+          </svg>
+          Get Property Details on WhatsApp
+        </a>
+        <button class="btn btn-ghost btn-lg" onclick="showPage('listings')">
+          Browse Properties
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-val">340+</div>
+          <div class="hero-stat-label">Properties Listed</div>
+        </div>
+        <div>
+          <div class="hero-stat-val">₹48Cr+</div>
+          <div class="hero-stat-label">Deals Closed</div>
+        </div>
+        <div>
+          <div class="hero-stat-val">4.9★</div>
+          <div class="hero-stat-label">Agent Rating</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="section" style="background:#fff">
+    <div class="section-inner">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title serif">Why Buyers Trust Us</h2>
+        </div>
+      </div>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon blue">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="benefit-title">Verified Listings</div>
+          <div class="benefit-desc">Every property is RERA-checked and agent-verified before it reaches you. No ghost listings, ever.</div>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon green">
+            <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
+          <div class="benefit-title">Smart Price History</div>
+          <div class="benefit-desc">Year-by-year price trends so you understand the market and buy with complete confidence.</div>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon violet">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <div class="benefit-title">Direct Agent Connect</div>
+          <div class="benefit-desc">WhatsApp-first communication. Talk to real agents, not call centers. Responses in under 15 minutes.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Properties (rendered by JS) -->
+  <section class="section" style="background:#f8f9fb">
+    <div class="section-inner">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title serif">Featured Properties</h2>
+          <p class="section-sub">Hand-picked by our consultants this week</p>
+        </div>
+        <span class="section-link" onclick="showPage('listings')">
+          View All
+          <svg viewBox="0 0 24 24">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </span>
+      </div>
+      <!-- Populated by renderHome() in app.js -->
+      <div class="prop-grid" id="featuredGrid"></div>
+    </div>
+  </section>
+
+  <!-- Testimonials (rendered by JS) -->
+  <section class="section" style="background:#fff">
+    <div class="section-inner">
+      <div class="section-header">
+        <div><h2 class="section-title serif">What Buyers Say</h2></div>
+      </div>
+      <!-- Populated by renderHome() in app.js -->
+      <div class="testi-grid" id="testiGrid"></div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <div class="cta-banner">
+    <h2 class="serif">Ready to Find Your Home?</h2>
+    <p>Talk to a verified agent in under 2 minutes</p>
+    <a href="https://wa.me/919876543210?text=Hi%2C%20I'm%20looking%20for%20a%20property%20in%20Pune."
+       target="_blank" class="btn btn-whatsapp btn-lg" style="display:inline-flex">
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+      </svg>
+      Start on WhatsApp — It's Free
+    </a>
+  </div>
+
+</div><!-- /page-home -->
+
+
+<!-- ══════════════════════════════════════
+     PAGE: LISTINGS
+══════════════════════════════════════ -->
+<div class="page" id="page-listings">
+
+  <div class="listings-header">
+    <div class="listings-header-inner">
+      <h1 class="listings-title serif">All Properties</h1>
+      <p class="listings-sub" id="listingsCount">6 verified properties in Pune</p>
+      <div class="search-bar">
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="search-input" id="searchInput" type="text"
+                 placeholder="Search by name or location…" oninput="filterListings()"/>
+        </div>
+        <!-- Filter pills rendered by renderListings() in app.js -->
+        <div class="filter-pills" id="filterPills"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="listings-content">
+    <!-- Populated by renderListings() in app.js -->
+    <div class="prop-grid" id="listingsGrid"></div>
+    <div class="empty-state" id="listingsEmpty" style="display:none">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      <p>No properties match your search</p>
+    </div>
+  </div>
+
+</div><!-- /page-listings -->
+
+
+<!-- ══════════════════════════════════════
+     PAGE: PROPERTY DETAIL
+══════════════════════════════════════ -->
+<div class="page" id="page-detail">
+  <div class="detail-inner">
+    <button class="back-btn" onclick="showPage('listings')">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Listings
+    </button>
+    <!-- Detail content rendered by renderDetailPage() in app.js -->
+    <div class="detail-grid" id="detailContent"></div>
+  </div>
+</div><!-- /page-detail -->
+
+
+<!-- ══════════════════════════════════════
+     PAGE: AGENT
+══════════════════════════════════════ -->
+<div class="page" id="page-agent">
+  <div class="detail-inner">
+    <button class="back-btn" onclick="showPage('home')">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Home
+    </button>
+    <!-- Agent content rendered by renderAgentPage() in app.js -->
+    <div id="agentContent"></div>
+  </div>
+</div><!-- /page-agent -->
+
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">
+        <div class="footer-logo-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9 21V12h6v9" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="footer-logo-text">PropFunnel</span>
+      </div>
+      <p class="footer-desc">Verified properties. Smart price insights. Real agents. Your next home is one WhatsApp away.</p>
+    </div>
+    <div>
+      <div class="footer-heading">Quick Links</div>
+      <div class="footer-links">
+        <button class="footer-link" onclick="showPage('home')">Home</button>
+        <button class="footer-link" onclick="showPage('listings')">Properties</button>
+        <button class="footer-link" onclick="showAgentPage('priya-homes')">Priya Sharma</button>
+        <button class="footer-link" onclick="showAgentPage('ravi-properties')">Ravi Mehta</button>
+      </div>
+    </div>
+    <div>
+      <div class="footer-heading">Connect</div>
+      <a href="https://wa.me/919876543210" target="_blank" class="btn btn-whatsapp btn-sm" style="display:inline-flex">
+        <svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
+        Chat on WhatsApp
+      </a>
+      <p class="footer-hours">Mon–Sun · 9 AM – 8 PM IST</p>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 PropFunnel. All properties subject to availability and verification.</div>
+</footer>
+
+
+<!-- WhatsApp Floating Button -->
+<a href="https://wa.me/919876543210?text=Hi%2C%20I'm%20interested%20in%20a%20property."
+   target="_blank" class="wa-float">
+  <svg viewBox="0 0 24 24">
+    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+  </svg>
+  <span>Chat Now</span>
+</a>
+
+
+<!-- ══════════════════════════════════════
+     MODAL (Lead & Visit — rendered by JS)
+══════════════════════════════════════ -->
+<div id="modalBackdrop" class="modal-backdrop" style="display:none" onclick="closeModal(event)">
+  <div class="modal-box" id="modalBox" onclick="event.stopPropagation()"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
+<script src="app.js"></script>
+
+</body>
+</html>
