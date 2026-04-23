@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   return sequelize.define('Property', {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    agentId: { type: DataTypes.STRING(100), allowNull: false },
+    agentId: { type: DataTypes.STRING(100), allowNull: true },
     userId: { type: DataTypes.INTEGER, allowNull: false },
     title: { type: DataTypes.STRING, allowNull: false },
     location: { type: DataTypes.STRING },
