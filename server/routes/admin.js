@@ -183,6 +183,8 @@ router.get('/leads', async (req, res) => {
 });
 
 // PUT /api/admin/leads/:id/status
+router.put('/leads/:id/status', async (req, res) => {
+  try {
     const isAgent = req.user.role === 'agent';
     const lead = await Lead.findOne({ 
       where: isAgent ? { id: req.params.id, linkedUserId: req.user.id } : { id: req.params.id, userId: req.user.id }

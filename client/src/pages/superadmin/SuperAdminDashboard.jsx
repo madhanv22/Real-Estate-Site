@@ -8,8 +8,10 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, AreaChart, Area 
 } from 'recharts';
+import { useNavigate } from 'react-router-dom';
 
 export default function SuperAdminDashboard() {
+  const navigate = useNavigate();
   const { data: stats = {}, isLoading } = useQuery({ 
     queryKey: ['super-stats'], 
     queryFn: fetchSuperStats 
@@ -110,7 +112,8 @@ export default function SuperAdminDashboard() {
           <div className="flex-1 overflow-auto p-2">
             <div className="space-y-1">
               {stats.recentLeads?.map((l, i) => (
-                <div key={i} className="flex items-start gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-colors group">
+                <div key={i} onClick={() => navigate('/superadmin/leads')}
+                  className="flex items-start gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-colors group cursor-pointer">
                   <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
                     <MessageSquare className="w-5 h-5" />
                   </div>
@@ -126,7 +129,8 @@ export default function SuperAdminDashboard() {
                 </div>
               ))}
               {stats.recentProperties?.map((p, i) => (
-                <div key={i} className="flex items-start gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-colors group">
+                <div key={i} onClick={() => navigate('/superadmin/properties')}
+                  className="flex items-start gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-colors group cursor-pointer">
                   <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
                     <Building2 className="w-5 h-5" />
                   </div>

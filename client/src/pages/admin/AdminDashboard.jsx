@@ -8,8 +8,10 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, LineChart, Line 
 } from 'recharts';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const { data: stats = {}, isLoading: statsLoading } = useQuery({ 
     queryKey: ['admin-stats'], 
     queryFn: fetchAdminStats 
@@ -85,7 +87,9 @@ export default function AdminDashboard() {
             {recentLeads.length > 0 ? (
               <div className="divide-y divide-slate-50">
                 {recentLeads.map((l) => (
-                  <div key={l.id} className="p-5 hover:bg-slate-50 transition-colors cursor-pointer group">
+                  <div key={l.id} 
+                    onClick={() => navigate('/admin/leads')}
+                    className="p-5 hover:bg-slate-50 transition-colors cursor-pointer group">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs group-hover:bg-blue-600 group-hover:text-white transition-colors">
                         {l.name?.[0] || <Phone className="w-4 h-4" />}
@@ -114,7 +118,10 @@ export default function AdminDashboard() {
             )}
           </div>
           <div className="p-4 bg-slate-50 border-t border-slate-100">
-            <button className="w-full py-2 text-xs font-black text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">
+            <button 
+              onClick={() => navigate('/admin/leads')}
+              className="w-full py-2 text-xs font-black text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest"
+            >
               View All Leads
             </button>
           </div>
