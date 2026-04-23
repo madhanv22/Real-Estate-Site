@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { sequelize, User, Agent, Property, Testimonial } = require('./models');
+const { sequelize, User, Agent, Property, Testimonial, Lead } = require('./models');
 
 const seed = async () => {
   await sequelize.sync({ force: true });
@@ -136,6 +136,24 @@ const seed = async () => {
     { name: 'Sneha Kulkarni', role: 'Investor', rating: 5, text: 'Bought 3 properties through this platform. The lead process is smooth and agents are genuinely helpful.' },
     { name: 'Deepak Nair', role: 'NRI Buyer', rating: 5, text: 'WhatsApp-based communication made the entire process seamless from Dubai. Highly recommend.' },
   ]);
+
+  // Historical Leads for the Growth Chart
+  const months = ['Jan','Feb','Mar','Apr','May','Jun'];
+  const leadData = [];
+  months.forEach((m, i) => {
+    const count = Math.floor(Math.random() * 20) + 5 + (i * 5); // Growing trend
+    for (let j = 0; j < count; j++) {
+      leadData.push({
+        name: `Lead ${m}-${j}`,
+        phone: '9100000000',
+        email: `lead${m}${j}@example.com`,
+        status: 'new',
+        userId: i % 2 === 0 ? priyaUser.id : raviUser.id,
+        createdAt: new Date(2026, i, Math.floor(Math.random() * 28) + 1),
+      });
+    }
+  });
+  await Lead.bulkCreate(leadData);
 
   console.log('✅ Seed complete!');
   console.log('  Super Admin → admin@propfunnel.com / Admin@123');

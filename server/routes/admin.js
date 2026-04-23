@@ -147,8 +147,19 @@ router.put('/agents/:id', async (req, res) => {
 router.get('/leads', async (req, res) => {
   try {
     const isSuper = req.user.role === 'super_admin';
+    const isAgent = req.user.role === 'agent';
+    
+    let where = {};
+    if (isSuper) {
+      where = {};
+    } else if (isAgent) {
+      where = { linkedUserId: req.user.id };
+    } else {
+      where = { userId: req.user.id };
+    }
+
     const leads = await Lead.findAll({
-      where: isSuper ? {} : { userId: req.user.id },
+      where,
       include: [{ model: Property, attributes: ['id','title','location'] }],
       order: [['createdAt', 'DESC']],
     });

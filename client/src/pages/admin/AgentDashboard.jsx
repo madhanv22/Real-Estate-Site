@@ -13,9 +13,14 @@ export default function AgentDashboard() {
 
   return (
     <div className="p-8 bg-slate-50 min-h-screen">
-      <div className="mb-10">
-        <h1 className="text-3xl font-black text-slate-900">Welcome Back</h1>
-        <p className="text-slate-500 font-bold uppercase text-[10px] tracking-[0.2em] mt-1">Agent Performance Hub</p>
+      <div className="flex items-center justify-between mb-10">
+        <div>
+          <h1 className="text-3xl font-black text-slate-900">Welcome Back</h1>
+          <p className="text-slate-500 font-bold uppercase text-[10px] tracking-[0.2em] mt-1">Agent Performance Hub</p>
+        </div>
+        <a href="/properties" className="flex items-center gap-2 bg-blue-600 text-white font-black px-6 py-3 rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-100">
+          <MessageSquare className="w-4 h-4" /> View My Listings on Site
+        </a>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">

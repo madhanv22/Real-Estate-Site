@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchAdminProperties, fetchAdminAgents, createProperty, updateProperty, deleteProperty, fetchAllProperties } from '../../api';
-import { Plus, Pencil, Trash2, Building2, MapPin } from 'lucide-react';
+import { Plus, Pencil, Trash2, Building2, MapPin, ExternalLink } from 'lucide-react';
 
 const EMPTY = { 
   agentId: '', 
@@ -90,17 +90,23 @@ export default function AdminProperties({ isSuperAdmin, isAgent }) {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="font-extrabold text-slate-900">{p.price}</span>
-                  {!isAgent && (
-                    <div className="flex gap-2">
-                      <button onClick={() => openEdit(p)} className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-100 transition-colors">
-                        <Pencil className="w-3.5 h-3.5" />
-                      </button>
-                      <button onClick={() => { if (window.confirm('Delete this property?')) delMut.mutate(p.id); }}
-                        className="w-8 h-8 bg-red-50 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-100 transition-colors">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  )}
+                  <div className="flex gap-2">
+                    <a href={`/properties/${p.id}`} target="_blank" rel="noreferrer" 
+                      className="w-8 h-8 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                    {!isAgent && (
+                      <>
+                        <button onClick={() => openEdit(p)} className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-100 transition-colors">
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <button onClick={() => { if (window.confirm('Delete this property?')) delMut.mutate(p.id); }}
+                          className="w-8 h-8 bg-red-50 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-100 transition-colors">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
