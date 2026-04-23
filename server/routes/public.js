@@ -6,7 +6,7 @@ const { Property, Agent, Testimonial, Lead, User } = require('../models');
 router.get('/properties', async (req, res) => {
   try {
     const { search = '', type = 'All', featured } = req.query;
-    const where = { isActive: true };
+    const where = { isActive: true, status: 'available' };
     if (type && type !== 'All') where.type = { [Op.like]: `%${type}%` };
     if (search) {
       where[Op.or] = [
@@ -24,7 +24,7 @@ router.get('/properties', async (req, res) => {
 router.get('/properties/:id', async (req, res) => {
   try {
     const property = await Property.findOne({
-      where: { id: req.params.id, isActive: true },
+      where: { id: req.params.id, isActive: true, status: 'available' },
       include: [{ model: Agent }],
     });
     if (!property) return res.status(404).json({ error: 'Property not found' });
@@ -37,7 +37,7 @@ router.get('/agents/:id', async (req, res) => {
   try {
     const agent = await Agent.findByPk(req.params.id);
     if (!agent) return res.status(404).json({ error: 'Agent not found' });
-    const properties = await Property.findAll({ where: { agentId: agent.id, isActive: true } });
+    const properties = await Property.findAll({ where: { agentId: agent.id, isActive: true, status: 'available' } });
     res.json({ agent, properties });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });

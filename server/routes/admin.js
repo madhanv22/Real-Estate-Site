@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { Op } = require('sequelize');
-const { Property, Agent, Lead, User } = require('../models');
+const { Property, Agent, Lead, User, Sale } = require('../models');
 const { auth, isAdmin } = require('../middleware/auth');
 
 router.use(auth, isAdmin);
@@ -19,11 +19,26 @@ router.get('/stats', async (req, res) => {
     const leadsCount = await Lead.count({ where: leadWhere });
     const newLeadsCount = await Lead.count({ where: { ...leadWhere, status: 'new' } });
 
+    // Daily lead stats for the last 7 days
+    const { sequelize } = require('../models');
+    const chartData = await Lead.findAll({
+      where: {
+        ...leadWhere,
+        createdAt: { [Op.gte]: new Date(new Date().setDate(new Date().getDate() - 7)) }
+      },
+      attributes: [
+        [sequelize.fn('date_format', sequelize.col('createdAt'), '%a'), 'day'],
+        [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+      ],
+      group: ['day'],
+    });
+
     res.json({ 
       properties: propertiesCount || 0, 
       leads: leadsCount || 0, 
       newLeads: newLeadsCount || 0, 
-      views: 0 
+      views: 0,
+      chartData: chartData.map(d => ({ name: d.getDataValue('day'), value: d.getDataValue('count') }))
     });
   } catch (err) { 
     console.error('❌ Stats Error:', err);
@@ -168,10 +183,11 @@ router.get('/leads', async (req, res) => {
 });
 
 // PUT /api/admin/leads/:id/status
-router.put('/leads/:id/status', async (req, res) => {
-  try {
-    const lead = await Lead.findOne({ where: { id: req.params.id, userId: req.user.id } });
-    if (!lead) return res.status(404).json({ error: 'Not found' });
+    const isAgent = req.user.role === 'agent';
+    const lead = await Lead.findOne({ 
+      where: isAgent ? { id: req.params.id, linkedUserId: req.user.id } : { id: req.params.id, userId: req.user.id }
+    });
+    if (!lead) return res.status(404).json({ error: 'Lead not found or unauthorized' });
     await lead.update({ status: req.body.status });
     res.json(lead);
   } catch (err) { res.status(500).json({ error: err.message }); }
@@ -181,6 +197,39 @@ router.put('/leads/:id/status', async (req, res) => {
 router.get('/profile', (req, res) => {
   const u = req.user;
   res.json({ id: u.id, name: u.name, email: u.email, companyName: u.companyName, phone: u.phone, whatsappNumber: u.whatsappNumber });
+});
+
+// POST /api/admin/sales (Log a sale)
+router.post('/sales', async (req, res) => {
+  try {
+    const { propertyId, leadId, salePrice, commission, clientName, saleDate } = req.body;
+    
+    // 1. Find the property
+    const property = await Property.findByPk(propertyId);
+    if (!property) return res.status(404).json({ error: 'Property not found' });
+
+    // 2. Create the Sale record
+    const sale = await Sale.create({
+      propertyId,
+      leadId,
+      userId: req.user.id,
+      agentId: property.agentId,
+      salePrice,
+      commission,
+      clientName,
+      saleDate: saleDate || new Date(),
+    });
+
+    // 3. Update property status
+    await property.update({ status: 'sold' });
+
+    // 4. Update lead status if applicable
+    if (leadId) {
+      await Lead.update({ status: 'converted' }, { where: { id: leadId } });
+    }
+
+    res.status(201).json(sale);
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 router.put('/profile', async (req, res) => {

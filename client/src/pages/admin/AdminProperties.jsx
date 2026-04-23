@@ -82,6 +82,7 @@ export default function AdminProperties({ isSuperAdmin, isAgent }) {
               <div className="relative h-40 bg-slate-100 overflow-hidden">
                 <img src={p.img} alt={p.title} className="w-full h-full object-cover" />
                 {p.isFeatured && <span className="absolute top-2 left-2 text-xs font-bold bg-amber-400 text-white px-2 py-0.5 rounded-full">Featured</span>}
+                {p.status === 'sold' && <span className="absolute inset-0 bg-slate-900/60 flex items-center justify-center text-white font-black uppercase tracking-widest text-lg backdrop-blur-[2px]">Sold</span>}
               </div>
               <div className="p-4">
                 <div className="font-bold text-slate-900 text-sm mb-1">{p.title}</div>
@@ -157,13 +158,24 @@ export default function AdminProperties({ isSuperAdmin, isAgent }) {
 
                 {/* Right Column: Advanced Info */}
                 <div className="space-y-6">
-                  <div>
-                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest block mb-2">Assigned Agent</label>
-                    <select value={form.agentId || ''} onChange={(e) => set('agentId', e.target.value)}
-                      className="w-full border border-slate-200 bg-slate-50/50 rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all appearance-none">
-                      <option value="">Select an Agent...</option>
-                      {agents.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-                    </select>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest block mb-2">Assigned Agent</label>
+                      <select value={form.agentId || ''} onChange={(e) => set('agentId', e.target.value)}
+                        className="w-full border border-slate-200 bg-slate-50/50 rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all appearance-none">
+                        <option value="">Select an Agent...</option>
+                        {agents.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest block mb-2">Property Status</label>
+                      <select value={form.status || 'available'} onChange={(e) => set('status', e.target.value)}
+                        className="w-full border border-slate-200 bg-slate-50/50 rounded-2xl px-4 py-3.5 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all appearance-none">
+                        <option value="available">Available</option>
+                        <option value="sold">Sold</option>
+                        <option value="hidden">Hidden</option>
+                      </select>
+                    </div>
                   </div>
 
                   <label className="flex items-center gap-3 p-4 bg-amber-50 rounded-2xl border border-amber-100 cursor-pointer group">

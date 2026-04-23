@@ -85,6 +85,9 @@ export const fetchAdminProfile = () =>
 export const updateAdminProfile = (data) =>
   api.put('/admin/profile', data).then((r) => r.data);
 
+export const logSale = (data) =>
+  api.post('/admin/sales', data).then((r) => r.data);
+
 // ── SUPER ADMIN ───────────────────────────────────────────────────────────
 export const fetchSuperStats = () =>
   api.get('/superadmin/stats').then((r) => r.data);

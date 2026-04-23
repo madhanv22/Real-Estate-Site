@@ -36,7 +36,7 @@ export default function AdminLayout({ isSuperAdmin, isAgent }) {
   const links = isSuperAdmin ? superLinks : isAgent ? agentLinks : adminLinks;
 
   return (
-    <div className="min-h-screen flex bg-slate-50">
+    <div className="h-screen flex bg-slate-50 overflow-hidden">
       {/* Sidebar */}
       <aside className="w-64 bg-slate-900 flex flex-col shrink-0">
         {/* Brand */}

@@ -23,13 +23,15 @@ router.get('/stats', async (req, res) => {
       }),
     ]);
 
-    // Simple month-wise lead distribution for the chart
+    // Month-wise lead distribution
     const monthlyData = await Lead.findAll({
       attributes: [
+        [sequelize.fn('date_format', sequelize.col('createdAt'), '%m'), 'monthNum'],
         [sequelize.fn('date_format', sequelize.col('createdAt'), '%b'), 'month'],
         [sequelize.fn('COUNT', sequelize.col('id')), 'count']
       ],
-      group: ['month'],
+      group: ['monthNum', 'month'],
+      order: [['monthNum', 'ASC']]
     });
 
     res.json({ 

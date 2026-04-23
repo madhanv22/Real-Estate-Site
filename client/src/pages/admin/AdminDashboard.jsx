@@ -61,9 +61,9 @@ export default function AdminDashboard() {
           </div>
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={[
-                { name: 'Mon', value: 4 }, { name: 'Tue', value: 7 }, { name: 'Wed', value: 5 },
-                { name: 'Thu', value: 9 }, { name: 'Fri', value: 12 }, { name: 'Sat', value: 8 }, { name: 'Sun', value: 6 }
+              <BarChart data={stats.chartData && stats.chartData.length > 0 ? stats.chartData : [
+                { name: 'Mon', value: 0 }, { name: 'Tue', value: 0 }, { name: 'Wed', value: 0 },
+                { name: 'Thu', value: 0 }, { name: 'Fri', value: 0 }, { name: 'Sat', value: 0 }, { name: 'Sun', value: 0 }
               ]}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12, fontWeight: 600}} />

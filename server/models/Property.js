@@ -21,5 +21,6 @@ module.exports = (sequelize) => {
     nearby: { type: DataTypes.JSON, defaultValue: [] },
     isFeatured: { type: DataTypes.BOOLEAN, defaultValue: false },
     isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
+    status: { type: DataTypes.ENUM('available', 'sold', 'hidden'), defaultValue: 'available' },
   });
 };

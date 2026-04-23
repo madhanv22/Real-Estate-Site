@@ -18,6 +18,7 @@ const User = require('./User')(sequelize);
 const Agent = require('./Agent')(sequelize);
 const Property = require('./Property')(sequelize);
 const Lead = require('./Lead')(sequelize);
+const Sale = require('./Sale')(sequelize);
 const Testimonial = require('./Testimonial')(sequelize);
 
 // Associations
@@ -36,4 +37,13 @@ Lead.belongsTo(Property, { foreignKey: 'propertyId' });
 User.hasMany(Lead, { foreignKey: 'userId', onDelete: 'CASCADE' });
 Lead.belongsTo(User, { foreignKey: 'userId' });
 
-module.exports = { sequelize, User, Agent, Property, Lead, Testimonial };
+Property.hasOne(Sale, { foreignKey: 'propertyId' });
+Sale.belongsTo(Property, { foreignKey: 'propertyId' });
+
+User.hasMany(Sale, { foreignKey: 'userId', onDelete: 'CASCADE' });
+Sale.belongsTo(User, { foreignKey: 'userId' });
+
+Agent.hasMany(Sale, { foreignKey: 'agentId', sourceKey: 'id' });
+Sale.belongsTo(Agent, { foreignKey: 'agentId', targetKey: 'id' });
+
+module.exports = { sequelize, User, Agent, Property, Lead, Sale, Testimonial };

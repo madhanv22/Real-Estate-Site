@@ -15,7 +15,22 @@ export default function SuperAdminDashboard() {
     queryFn: fetchSuperStats 
   });
 
-  if (isLoading) return <div className="p-8 animate-pulse">Loading Dashboard...</div>;
+  const timeAgo = (date) => {
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+    let interval = seconds / 31536000;
+    if (interval > 1) return Math.floor(interval) + "y ago";
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + "mo ago";
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + "d ago";
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + "h ago";
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + "m ago";
+    return "just now";
+  };
+
+  if (isLoading) return <div className="p-8 animate-pulse text-slate-400 font-bold">Loading Platform Intelligence...</div>;
 
   return (
     <div className="p-8 space-y-8 bg-slate-50/50 min-h-screen">
@@ -52,9 +67,6 @@ export default function SuperAdminDashboard() {
                   <div className="text-4xl font-black text-slate-900 mb-1">{s.value}</div>
                   <div className="text-sm font-bold text-slate-400 uppercase tracking-wider">{s.label}</div>
                 </div>
-                <div className="bg-emerald-50 text-emerald-600 text-xs font-black px-2 py-1 rounded-lg flex items-center gap-1">
-                  <TrendingUp className="w-3 h-3" /> {s.growth}
-                </div>
               </div>
             </div>
           </div>
@@ -66,10 +78,7 @@ export default function SuperAdminDashboard() {
         <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <h3 className="font-black text-slate-900 text-lg">Lead Growth Trend</h3>
-            <select className="bg-slate-50 border-none text-xs font-bold px-3 py-2 rounded-xl outline-none">
-              <option>Last 6 Months</option>
-              <option>Last Year</option>
-            </select>
+            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Monthly Lead Capture</div>
           </div>
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -96,7 +105,7 @@ export default function SuperAdminDashboard() {
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden flex flex-col">
           <div className="p-8 border-b border-slate-100 flex items-center justify-between">
             <h3 className="font-black text-slate-900 text-lg">Platform Pulse</h3>
-            <button className="text-xs font-bold text-blue-600 hover:underline">View All Activities</button>
+            <button className="text-xs font-bold text-blue-600 hover:underline">Live Activities</button>
           </div>
           <div className="flex-1 overflow-auto p-2">
             <div className="space-y-1">
@@ -107,14 +116,13 @@ export default function SuperAdminDashboard() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-bold text-slate-900 text-sm">New Lead Received</span>
-                      <span className="text-[10px] font-bold text-slate-400">Just Now</span>
+                      <span className="font-bold text-slate-900 text-sm">New Lead Captured</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{timeAgo(l.createdAt)}</span>
                     </div>
                     <p className="text-xs text-slate-500 leading-relaxed line-clamp-1">
-                      Lead for <span className="font-bold text-slate-700">{l.Property?.title}</span> captured by <span className="text-blue-600 font-bold">{l.User?.companyName}</span>
+                      Enquiry for <span className="font-bold text-slate-700">{l.Property?.title}</span> processed by <span className="text-blue-600 font-bold">{l.User?.companyName}</span>
                     </p>
                   </div>
-                  <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500 transition-colors" />
                 </div>
               ))}
               {stats.recentProperties?.map((p, i) => (
@@ -124,14 +132,13 @@ export default function SuperAdminDashboard() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-bold text-slate-900 text-sm">Property Published</span>
-                      <span className="text-[10px] font-bold text-slate-400">Today</span>
+                      <span className="font-bold text-slate-900 text-sm">New Property Live</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{timeAgo(p.createdAt)}</span>
                     </div>
                     <p className="text-xs text-slate-500 leading-relaxed line-clamp-1">
-                      <span className="font-bold text-slate-700">{p.title}</span> listed by <span className="text-emerald-600 font-bold">{p.User?.companyName}</span>
+                      <span className="font-bold text-slate-700">{p.title}</span> published by <span className="text-emerald-600 font-bold">{p.User?.companyName}</span>
                     </p>
                   </div>
-                  <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors" />
                 </div>
               ))}
             </div>
