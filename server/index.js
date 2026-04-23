@@ -20,11 +20,17 @@ app.use('/api/superadmin', require('./routes/superadmin'));
 
 app.get('/api/health', (_, res) => res.json({ status: 'ok', time: new Date() }));
 
-// Sync DB then start
-sequelize.sync({ alter: true }).then(() => {
-  console.log('✅ Database synced');
-  app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
-}).catch((err) => {
-  console.error('❌ DB sync error:', err.message);
-  process.exit(1);
-});
+// Root route
+app.get('/', (req, res) => res.send('PropFunnel API is running...'));
+
+// Only start the server if we are running locally
+if (process.env.NODE_ENV !== 'production') {
+  sequelize.sync({ alter: true }).then(() => {
+    console.log('✅ Database synced');
+    app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+  }).catch((err) => {
+    console.error('❌ DB sync error:', err.message);
+  });
+}
+
+module.exports = app;
