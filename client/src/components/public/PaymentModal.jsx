@@ -6,10 +6,18 @@ export default function PaymentModal({ property, onNotifySuccess, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="bg-white rounded-[48px] max-w-md w-full shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] overflow-y-auto max-h-[90vh] scale-in-center border border-slate-100 no-scrollbar">
+      <div className="bg-white rounded-[48px] max-w-md w-full shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] overflow-hidden scale-in-center border border-slate-100 flex flex-col max-h-[90vh]">
+        {/* Custom Thin Scrollbar Styling */}
+        <style>{`
+          .custom-scroll::-webkit-scrollbar { width: 4px; }
+          .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+          .custom-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+          .custom-scroll::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+        `}</style>
         
-        {/* Header */}
-        <div className="bg-slate-50 px-10 pt-10 pb-8 relative">
+        <div className="overflow-y-auto custom-scroll">
+          {/* Header */}
+          <div className="bg-slate-50 px-10 pt-10 pb-8 relative">
           <button onClick={onClose} className="absolute top-8 right-8 text-slate-300 hover:text-slate-900 transition-colors p-2 hover:bg-slate-200/50 rounded-full">
             <X className="w-5 h-5" />
           </button>
@@ -87,6 +95,7 @@ export default function PaymentModal({ property, onNotifySuccess, onClose }) {
           <p className="text-[9px] text-slate-400 font-bold text-center mt-6 uppercase tracking-widest flex items-center justify-center gap-2">
             <Lock className="w-3 h-3" /> Secure Transaction Verified by PCI-DSS
           </p>
+        </div>
         </div>
       </div>
     </div>

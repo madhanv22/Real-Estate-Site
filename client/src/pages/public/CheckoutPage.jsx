@@ -79,32 +79,32 @@ export default function CheckoutPage() {
       theme: { color: "#2563eb" }
     };
 
-    try {
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } catch (err) {
-      // Fallback if Razorpay fails to load or for easy testing
-      console.error("Razorpay error", err);
-      // For demonstration purposes, if Razorpay is blocked, we'll still show the process
-      setProcessing(true);
-      setTimeout(async () => {
-        try {
-          await createBooking({
-            propertyId: id,
-            clientName: form.name,
-            email: form.email,
-            amount: '50000',
-            paymentId: 'MOCK_PAY_' + Date.now()
-          });
-          setDone(true);
-        } catch (err) {
-          setStatusModal({ status: 'error', message: 'Offline Mock Success' });
-          setDone(true); // Still show success for demo if server fails
-        } finally {
-          setProcessing(false);
-        }
-      }, 1500);
-    }
+    // --- REAL RAZORPAY CODE (READY FOR PRODUCTION) ---
+    // try {
+    //   const rzp = new window.Razorpay(options);
+    //   rzp.open();
+    // } catch (err) {
+    //   setStatusModal({ status: 'error', message: 'Payment gateway failed to load.' });
+    // }
+
+    // --- MOCK SUCCESS FLOW (FOR TESTING) ---
+    setProcessing(true);
+    setTimeout(async () => {
+      try {
+        await createBooking({
+          propertyId: id,
+          clientName: form.name,
+          email: form.email,
+          amount: '50000',
+          paymentId: 'MOCK_PAY_' + Math.random().toString(36).substr(2, 9).toUpperCase()
+        });
+        setDone(true);
+      } catch (err) {
+        setStatusModal({ status: 'error', message: 'Server error during mock booking.' });
+      } finally {
+        setProcessing(false);
+      }
+    }, 2000);
   };
 
   const handleReserveLater = async () => {
@@ -140,16 +140,16 @@ export default function CheckoutPage() {
 
   if (done) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-        <div className="bg-white rounded-[40px] p-12 max-w-lg w-full text-center shadow-2xl border border-slate-100">
+      <div className="bg-slate-50 py-20 px-6 flex items-center justify-center">
+        <div className="bg-white rounded-[40px] p-12 max-w-lg w-full text-center shadow-2xl border border-slate-100 scale-in-center">
           <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce">
             <CheckCircle2 className="w-12 h-12" />
           </div>
-          <h1 className="text-3xl font-black text-slate-900 mb-4">Reservation Confirmed!</h1>
-          <p className="text-slate-500 font-medium leading-relaxed mb-8">
-            Congratulations! Your booking for <span className="font-bold text-slate-800">{property.title}</span> has been successfully logged. Our executive will reach out shortly for the next steps.
+          <h1 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">Reservation Confirmed!</h1>
+          <p className="text-slate-500 font-medium leading-relaxed mb-10">
+            Congratulations! Your booking for <span className="font-bold text-slate-800 tracking-tight">{property.title}</span> has been successfully logged. Our executive will reach out shortly for the next steps.
           </p>
-          <button onClick={() => navigate('/')} className="w-full bg-slate-900 text-white font-black py-4 rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200">
+          <button onClick={() => navigate('/')} className="w-full bg-slate-900 text-white font-black py-5 rounded-[22px] hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-95">
             Back to Home
           </button>
         </div>
