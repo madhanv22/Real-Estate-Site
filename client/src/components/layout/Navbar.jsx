@@ -25,6 +25,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-6">
           <Link to="/" className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">Home</Link>
           <Link to="/properties" className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">Properties</Link>
+          <Link to="/my-bookings" className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">Track Bookings</Link>
           <button 
             onClick={() => {
               if (window.location.pathname === '/') {

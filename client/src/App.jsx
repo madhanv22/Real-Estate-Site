@@ -13,6 +13,7 @@ import ListingsPage from './pages/public/ListingsPage';
 import PropertyDetailPage from './pages/public/PropertyDetailPage';
 import AgentPage from './pages/public/AgentPage';
 import CheckoutPage from './pages/public/CheckoutPage';
+import MyBookings from './pages/public/MyBookings';
 import ScrollToTop from './components/utils/ScrollToTop';
 
 // Auth
@@ -50,6 +51,7 @@ const AppRoutes = () => {
       <Route path="/properties" element={<PublicLayout><ListingsPage /></PublicLayout>} />
       <Route path="/properties/:id" element={<PublicLayout><PropertyDetailPage /></PublicLayout>} />
       <Route path="/checkout/:id" element={<PublicLayout><CheckoutPage /></PublicLayout>} />
+      <Route path="/my-bookings" element={<PublicLayout><MyBookings /></PublicLayout>} />
       <Route path="/agents/:id" element={<PublicLayout><AgentPage /></PublicLayout>} />
 
       {/* Auth */}

@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { Op } = require('sequelize');
-const { Property, Agent, Testimonial, Lead, User } = require('../models');
+const { Property, Agent, Testimonial, Lead, User, Sale } = require('../models');
 
 // GET /api/properties
 router.get('/properties', async (req, res) => {
@@ -64,6 +64,55 @@ router.post('/leads', async (req, res) => {
 
     const lead = await Lead.create({ propertyId, userId, name, phone, budget, propertyType, timeline, loanRequired, visitDate, visitTime, leadType: leadType || 'inquiry' });
     res.status(201).json(lead);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// POST /api/bookings (Public direct booking)
+router.post('/bookings', async (req, res) => {
+  try {
+    const { propertyId, clientName, email, amount, paymentId } = req.body;
+    const property = await Property.findByPk(propertyId);
+    if (!property) return res.status(404).json({ error: 'Property not found' });
+    if (property.status !== 'available') return res.status(400).json({ error: 'Property is no longer available' });
+
+    // Mark as sold and record the transaction
+    await property.update({ status: 'sold' });
+    
+    // Create a Sale record for the ledger
+    await Sale.create({
+      propertyId,
+      userId: property.userId,
+      agentId: property.agentId,
+      salePrice: property.price,
+      commission: '0',
+      clientName,
+      clientEmail: email,
+      paymentId: paymentId || 'PAY_AT_SITE',
+      paymentStatus: (!paymentId || paymentId === 'PAY_AT_SITE') ? 'pending' : 'completed',
+      saleDate: new Date()
+    });
+
+    res.status(201).json({ message: 'Booking successful' });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// GET /api/my-bookings
+router.get('/my-bookings', async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+    
+    // Find all sales/bookings for this email
+    // Note: We'll match against the clientName or a new email field if we added one
+    // For now, let's assume we store email in the 'clientName' field or a dedicated field
+    // Looking at CheckoutPage, I'm passing email as a separate field, let's ensure Sale model has it
+    const bookings = await Sale.findAll({
+      where: { clientEmail: email },
+      include: [{ model: Property }],
+      order: [['saleDate', 'DESC']]
+    });
+    
+    res.json(bookings);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 

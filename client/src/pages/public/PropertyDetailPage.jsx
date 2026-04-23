@@ -129,6 +129,7 @@ export default function PropertyDetailPage() {
           {/* RIGHT – Sticky Sidebar */}
           <AgentSidebar
             agent={agent}
+            propertyId={property.id}
             onLeadModal={() => setLeadOpen(true)}
             onVisitModal={() => setVisitOpen(true)}
           />

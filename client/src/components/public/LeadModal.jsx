@@ -6,6 +6,7 @@ import { X, Lock, MessageCircle, CheckCircle } from 'lucide-react';
 export default function LeadModal({ property, onClose }) {
   const [form, setForm] = useState({ budget: '', propertyType: '', timeline: '', loanRequired: '', phone: '' });
   const [done, setDone] = useState(false);
+  const [error, setError] = useState('');
 
   const mutation = useMutation({
     mutationFn: (data) => submitLead(data),
@@ -15,7 +16,11 @@ export default function LeadModal({ property, onClose }) {
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
   const handleSubmit = () => {
-    if (!form.phone) return;
+    if (!form.phone) {
+      setError('WhatsApp Number is required to get full details.');
+      return;
+    }
+    setError('');
     mutation.mutate({ propertyId: property?.id, ...form, leadType: 'inquiry' });
   };
 
@@ -57,6 +62,7 @@ export default function LeadModal({ property, onClose }) {
             </div>
           ) : (
             <>
+              {error && <div className="mb-4 p-3 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100 animate-in fade-in zoom-in duration-200">{error}</div>}
               <div className="grid grid-cols-2 gap-3 mb-3">
                 {[
                   { key: 'budget', label: 'Budget Range', opts: ['Under ₹50L','₹50L – ₹1Cr','₹1Cr – ₹2Cr','₹2Cr+'] },

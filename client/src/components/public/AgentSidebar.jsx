@@ -1,6 +1,7 @@
-import { MessageCircle, Calendar, Zap, Shield, Clock, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { MessageCircle, Calendar, Zap, Shield, Clock, CheckCircle, CreditCard } from 'lucide-react';
 
-export default function AgentSidebar({ agent, onLeadModal, onVisitModal }) {
+export default function AgentSidebar({ agent, propertyId, onLeadModal, onVisitModal }) {
   if (!agent) return null;
   return (
     <div className="sticky top-20 bg-white border border-slate-200 rounded-2xl p-6 shadow-card">
@@ -20,6 +21,10 @@ export default function AgentSidebar({ agent, onLeadModal, onVisitModal }) {
 
       {/* Buttons */}
       <div className="flex flex-col gap-3 mb-5">
+        <Link to={`/checkout/${propertyId}`}
+          className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white font-black py-3.5 rounded-xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200">
+          <CreditCard className="w-4 h-4" /> Reserve This Property
+        </Link>
         <button onClick={onLeadModal}
           className="w-full flex items-center justify-center gap-2 bg-emerald-500 text-white font-bold py-3 rounded-xl hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-100">
           <MessageCircle className="w-4 h-4" /> Get Full Details

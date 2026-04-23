@@ -41,6 +41,9 @@ export const fetchTestimonials = () =>
 export const submitLead = (data) =>
   api.post('/leads', data).then((r) => r.data);
 
+export const createBooking = (data) =>
+  api.post('/bookings', data).then((r) => r.data);
+
 // ── AUTH ─────────────────────────────────────────────────────────────────
 export const login = (data) =>
   api.post('/auth/login', data).then((r) => r.data);

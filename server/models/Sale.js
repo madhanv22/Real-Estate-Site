@@ -11,6 +11,8 @@ module.exports = (sequelize) => {
     commission: { type: DataTypes.STRING },
     saleDate: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     clientName: { type: DataTypes.STRING },
+    clientEmail: { type: DataTypes.STRING },
     paymentStatus: { type: DataTypes.ENUM('pending', 'partial', 'completed'), defaultValue: 'pending' },
+    paymentId: { type: DataTypes.STRING },
   });
 };

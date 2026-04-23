@@ -9,6 +9,7 @@ const today = new Date().toISOString().split('T')[0];
 export default function VisitModal({ property, onClose }) {
   const [form, setForm] = useState({ date: '', slot: '', name: '', phone: '' });
   const [done, setDone] = useState(false);
+  const [error, setError] = useState('');
 
   const mutation = useMutation({
     mutationFn: (data) => submitLead(data),
@@ -19,9 +20,10 @@ export default function VisitModal({ property, onClose }) {
 
   const handleSubmit = () => {
     if (!form.date || !form.slot || !form.name || !form.phone) {
-      alert('Please fill in all fields and select a time slot.');
+      setError('Please fill in all fields and select a time slot.');
       return;
     }
+    setError('');
     mutation.mutate({
       propertyId: property?.id,
       name: form.name,
@@ -62,6 +64,7 @@ export default function VisitModal({ property, onClose }) {
             </div>
           ) : (
             <>
+              {error && <div className="mb-4 p-3 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100 animate-in fade-in zoom-in duration-200">{error}</div>}
               <div className="mb-4">
                 <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Select Date</label>
                 <input type="date" min={today} value={form.date} onChange={(e) => set('date', e.target.value)}

@@ -103,11 +103,11 @@ export default function AdminLeads() {
                             </button>
                             <button onClick={() => {
                               const url = `${window.location.origin}/checkout/${l.propertyId}`;
-                              navigator.clipboard.writeText(url);
-                              alert('Checkout link copied to clipboard!');
+                              const msg = `Hi ${l.name || 'there'}! It was great meeting you. Here is the secure link to complete your booking for ${l.Property?.title || 'the property'}: ${url}`;
+                              window.open(`https://wa.me/${l.phone}?text=${encodeURIComponent(msg)}`, '_blank');
                             }}
                               className="text-[10px] font-black text-emerald-600 hover:underline flex items-center gap-1">
-                              <DollarSign className="w-3 h-3" /> Copy Checkout Link
+                              <MessageSquare className="w-3 h-3" /> Send Payment Link
                             </button>
                           </div>
                         )}
