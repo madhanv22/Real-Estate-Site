@@ -18,8 +18,7 @@ export default function HeroSection() {
 
         {/* Title */}
         <h1 className="font-serif text-4xl md:text-6xl font-black leading-tight mb-5">
-          Discover Verified Properties<br />
-          <span className="gradient-text">in Pune</span>
+          Discover Verified Properties
         </h1>
 
         <p className="text-white/70 text-lg max-w-xl mx-auto mb-10">
