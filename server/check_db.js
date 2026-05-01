@@ -1,16 +1,15 @@
-const { User, Property, Lead } = require('./models');
+require('dotenv').config();
+const { sequelize } = require('./models');
 
-async function check() {
-  const admins = await User.count({ where: { role: 'admin' } });
-  const props = await Property.count();
-  const leads = await Lead.count();
-  const allLeads = await Lead.findAll({ attributes: ['createdAt'] });
-  
-  console.log('--- DB STATS ---');
-  console.log('Admins:', admins);
-  console.log('Properties:', props);
-  console.log('Leads:', leads);
-  console.log('Lead Dates:', allLeads.map(l => l.createdAt));
+async function testConnection() {
+  try {
+    await sequelize.authenticate();
+    console.log("SUCCESS: Clever Cloud Database is connected and responding!");
+    process.exit(0);
+  } catch (error) {
+    console.error("ERROR: Failed to connect to Clever Cloud:", error.message);
+    process.exit(1);
+  }
 }
 
-check();
+testConnection();
