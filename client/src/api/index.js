@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://real-estate-site-mauve-nine.vercel.app/api',
+  baseURL: import.meta.env.DEV ? 'http://localhost:5000/api' : 'https://real-estate-site-mauve-nine.vercel.app/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
