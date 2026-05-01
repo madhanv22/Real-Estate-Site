@@ -35,9 +35,11 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log('✅ Database connected successfully');
     
-    // In production, we sync without 'alter' for safety, or you can run migrations
-    await sequelize.sync(); 
-    console.log('✅ Database synced');
+    // Only sync in development - in production tables already exist
+    if (process.env.NODE_ENV !== 'production') {
+      await sequelize.sync();
+      console.log('✅ Database synced');
+    }
 
     if (process.env.NODE_ENV !== 'production') {
       app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
