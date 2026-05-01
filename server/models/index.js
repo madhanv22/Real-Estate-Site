@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+require('mysql2'); // required: Vercel's bundler needs a static require to include mysql2
 require('dotenv').config();
 
 const sequelize = new Sequelize(
